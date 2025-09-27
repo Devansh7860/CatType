@@ -16,12 +16,52 @@ const TypingArea = ({
 }) => {
   const { colors } = useTheme();
   const containerRef = useRef(null);
+  const hiddenInputRef = useRef(null);
 
   useEffect(() => {
-    if (containerRef.current && !loading && !isFinished) {
-      containerRef.current.focus();
+    if (!loading && !isFinished) {
+      // Focus the hidden input to trigger mobile keyboard
+      if (hiddenInputRef.current) {
+        hiddenInputRef.current.focus();
+      }
+      // Also focus container for desktop
+      if (containerRef.current) {
+        containerRef.current.focus();
+      }
     }
   }, [loading, isFinished]);
+
+  // Handle input from hidden field (mobile)
+  const handleHiddenInput = (e) => {
+    const inputValue = e.target.value;
+    
+    if (inputValue.length > 0) {
+      // New character typed
+      const newChar = inputValue[inputValue.length - 1];
+      const syntheticEvent = {
+        key: newChar,
+        preventDefault: () => {},
+        target: e.target
+      };
+      onKeyDown(syntheticEvent);
+    }
+    
+    // Clear the input
+    setTimeout(() => {
+      e.target.value = '';
+    }, 0);
+  };
+
+  // Handle backspace on mobile
+  const handleKeyDown = (e) => {
+    if (e.key === 'Backspace') {
+      onKeyDown(e);
+      e.preventDefault();
+    } else if (e.key === ' ') {
+      onKeyDown(e);
+      e.preventDefault();
+    }
+  };
 
   if (loading) {
     return (
@@ -53,6 +93,21 @@ const TypingArea = ({
       onKeyDown={onKeyDown}
       className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 cursor-text focus:outline-none focus:ring-2 focus:ring-purple-400/20 relative transition-all duration-300 hover:shadow-lg border border-purple-800/40"
     >
+      {/* Hidden input for mobile keyboard */}
+      <input
+        ref={hiddenInputRef}
+        type="text"
+        className="absolute top-0 left-0 w-full h-full opacity-0 cursor-text"
+        onInput={handleHiddenInput}
+        onKeyDown={handleKeyDown}
+        autoComplete="off"
+        autoCorrect="off"
+        autoCapitalize="off"
+        spellCheck="false"
+        value=""
+        placeholder=""
+      />
+      
       <div className="relative">
         <div className="text-lg sm:text-xl md:text-2xl leading-relaxed font-mono select-none tracking-normal">
           {Array.from({ length: visibleLines }).map((_, lineIdx) => {
@@ -127,10 +182,16 @@ const TypingArea = ({
       </div>
       
       {!isFinished && (
-        <div className="mt-6 text-sm text-gray-400 text-center flex items-center justify-center gap-2 font-medium">
-          <span className="text-base">🐾</span>
-          <span>Start typing to begin the test...</span>
-          <span className="text-base">🐾</span>
+        <div className="mt-6 text-sm text-gray-400 text-center flex flex-col sm:flex-row items-center justify-center gap-2 font-medium">
+          <div className="flex items-center gap-2">
+            <span className="text-base">🐾</span>
+            <span className="hidden sm:inline">Start typing to begin the test...</span>
+            <span className="sm:hidden">Tap here and start typing...</span>
+            <span className="text-base">🐾</span>
+          </div>
+          <div className="sm:hidden text-xs text-gray-500 mt-1">
+            📱 Mobile keyboard will appear when you tap
+          </div>
         </div>
       )}
     </div>
