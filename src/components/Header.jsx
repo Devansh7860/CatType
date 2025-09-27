@@ -33,7 +33,7 @@ export const Header = ({
           </div>
           <div>
             <h1 className={`text-2xl font-bold bg-gradient-to-r ${colors.primary} bg-clip-text text-transparent hover:scale-105 transform transition-transform duration-200`}>
-              CatType
+              TypePurr
             </h1>
             <p className={`text-xs ${colors.textSecondary} -mt-1 font-medium`}>
               purrfect typing practice

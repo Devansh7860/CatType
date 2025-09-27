@@ -1,4 +1,4 @@
-# CatType 🐱 - Purrfect Typing Practice
+# TypePurr 🐱 - Purrfect Typing Practice
 
 A fun, cat-themed typing test application built with React and Tailwind CSS. Inspired by MonkeyType but with a delightful feline twist!
 
@@ -55,7 +55,7 @@ A fun, cat-themed typing test application built with React and Tailwind CSS. Ins
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd CatType/Frontend
+   cd TypePurr/Frontend
    ```
 
 2. **Install dependencies**
@@ -133,7 +133,7 @@ Frontend/
 
 ## 🤝 Contributing
 
-Feel free to contribute to CatType! Whether it's bug fixes, new features, or improvements to the cat theme, all contributions are welcome.
+Feel free to contribute to TypePurr! Whether it's bug fixes, new features, or improvements to the cat theme, all contributions are welcome.
 
 ## 📄 License
 

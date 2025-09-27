@@ -27,11 +27,13 @@ export const History = ({ history, onClearHistory }) => {
   return (
     <div>
       <div className="flex items-center justify-between mb-8">
-        <h2 className={`text-3xl font-bold bg-gradient-to-r ${colors.primary} bg-clip-text text-transparent flex items-center gap-3`}>
-          <span>📊</span>
-          Typing History
-          <span>🐱</span>
-        </h2>
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">📊</span>
+          <h2 className={`text-3xl font-bold bg-gradient-to-r ${colors.primary} bg-clip-text text-transparent`}>
+            Typing History
+          </h2>
+          <span className="text-3xl">🐱</span>
+        </div>
         
         {history.length > 0 && (
           <button

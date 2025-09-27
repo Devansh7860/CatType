@@ -249,11 +249,13 @@ export const Achievements = ({ history }) => {
 
       {/* Header */}
       <div className="text-center">
-        <h2
-          className={`text-4xl font-bold bg-gradient-to-r ${colors.primary} bg-clip-text text-transparent mb-4`}
-        >
-          🏆 Cat Achievements 🐾
-        </h2>
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <span className="text-4xl">🏆</span>
+          <h2 className={`text-4xl font-bold bg-gradient-to-r ${colors.primary} bg-clip-text text-transparent`}>
+            Cat Achievements
+          </h2>
+          <span className="text-4xl">🐾</span>
+        </div>
         <p className={`${colors.textSecondary} text-lg mb-6`}>
           Collect all the cat-themed achievements by improving your typing
           skills! 🎯

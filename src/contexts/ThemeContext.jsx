@@ -15,7 +15,7 @@ export const ThemeProvider = ({ children }) => {
   const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem('cattype-theme');
+    const savedTheme = localStorage.getItem('typepurr-theme');
     if (savedTheme) {
       setIsDark(savedTheme === 'dark');
     } else {
@@ -28,7 +28,7 @@ export const ThemeProvider = ({ children }) => {
   const toggleTheme = () => {
     const newTheme = !isDark;
     setIsDark(newTheme);
-    localStorage.setItem('cattype-theme', newTheme ? 'dark' : 'light');
+    localStorage.setItem('typepurr-theme', newTheme ? 'dark' : 'light');
   };
 
   const getThemeColors = () => {

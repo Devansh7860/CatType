@@ -56,9 +56,13 @@ export const Analytics = ({ history }) => {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center">
-        <h2 className={`text-4xl font-bold bg-gradient-to-r ${colors.primary} bg-clip-text text-transparent mb-4`}>
-          📊 Analytics Dashboard 📈
-        </h2>
+        <div className="flex items-center justify-center gap-3 mb-4">
+          <span className="text-4xl">📊</span>
+          <h2 className={`text-4xl font-bold bg-gradient-to-r ${colors.primary} bg-clip-text text-transparent`}>
+            Analytics Dashboard
+          </h2>
+          <span className="text-4xl">📈</span>
+        </div>
         <p className={`${colors.textSecondary} text-lg`}>Your typing journey in numbers and purr-formance insights! 🐱</p>
       </div>
 
