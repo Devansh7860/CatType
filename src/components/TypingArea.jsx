@@ -1,7 +1,7 @@
-﻿import { useEffect, useRef } from "react";
+﻿import { useEffect, useRef, useState, forwardRef, useImperativeHandle } from "react";
 import { useTheme } from "../contexts/ThemeContext";
 
-const TypingArea = ({ 
+const TypingArea = forwardRef(({ 
   words, 
   currentWordIndex, 
   currentInput,
@@ -12,24 +12,68 @@ const TypingArea = ({
   wordStatuses,
   lineOffset,
   wordsPerLine,
-  visibleLines
-}) => {
+  visibleLines,
+  showCountdown,
+  countdown
+}, ref) => {
   const { colors } = useTheme();
   const containerRef = useRef(null);
   const hiddenInputRef = useRef(null);
+  const [isMobile, setIsMobile] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
 
-  useEffect(() => {
-    if (!loading && !isFinished) {
-      // Focus the hidden input to trigger mobile keyboard
-      if (hiddenInputRef.current) {
+  // Expose focus method to parent component
+  useImperativeHandle(ref, () => ({
+    focus: () => {
+      if (isMobile && hiddenInputRef.current) {
         hiddenInputRef.current.focus();
-      }
-      // Also focus container for desktop
-      if (containerRef.current) {
+        setIsFocused(true);
+      } else if (containerRef.current) {
         containerRef.current.focus();
       }
     }
-  }, [loading, isFinished]);
+  }));
+
+  useEffect(() => {
+    // Simplified mobile detection
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768 || /Mobi|Android/i.test(navigator.userAgent));
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  useEffect(() => {
+    if (!loading && !isFinished && !showCountdown) {
+      if (isMobile && hiddenInputRef.current) {
+        // Auto-focus on mobile
+        setTimeout(() => {
+          hiddenInputRef.current.focus();
+          setIsFocused(true);
+        }, 100);
+      } else if (containerRef.current) {
+        // Focus container for desktop
+        containerRef.current.focus();
+      }
+    }
+  }, [loading, isFinished, isMobile, showCountdown]);
+
+  // Focus immediately when countdown finishes (showCountdown changes from true to false)
+  useEffect(() => {
+    if (!showCountdown && !loading && !isFinished) {
+      // Small delay to ensure the countdown overlay is gone
+      setTimeout(() => {
+        if (isMobile && hiddenInputRef.current) {
+          hiddenInputRef.current.focus();
+          setIsFocused(true);
+        } else if (containerRef.current) {
+          containerRef.current.focus();
+        }
+      }, 50);
+    }
+  }, [showCountdown, loading, isFinished, isMobile]);
 
   // Handle input from hidden field (mobile)
   const handleHiddenInput = (e) => {
@@ -82,6 +126,43 @@ const TypingArea = ({
     );
   }
 
+  // Show countdown overlay
+  if (showCountdown) {
+    const displayText = countdown > 0 ? countdown : "GO!";
+    const isGo = countdown === 0;
+    
+    return (
+      <div className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-8 mb-6 flex flex-col items-center justify-center min-h-[150px] border border-purple-800/40 relative overflow-hidden">
+        <div className="text-center z-10 relative">
+          <div className={`text-8xl sm:text-9xl font-bold mb-4 transition-all duration-300 ${
+            isGo 
+              ? 'text-green-400 animate-bounce scale-110' 
+              : 'text-purple-400 animate-pulse'
+          }`}>
+            {displayText}
+          </div>
+          <div className="text-gray-400 text-lg flex items-center justify-center gap-2">
+            <span>🐾</span>
+            <span>{isGo ? "Start typing!" : "Get ready to type..."}</span>
+            <span>🐾</span>
+          </div>
+        </div>
+        
+        {/* Animated background effect */}
+        <div className={`absolute inset-0 rounded-xl transition-all duration-500 ${
+          isGo 
+            ? 'bg-gradient-to-br from-green-500/10 to-emerald-500/10 animate-pulse' 
+            : 'bg-gradient-to-br from-purple-500/5 to-pink-500/5 animate-pulse'
+        }`}></div>
+        
+        {/* Ripple effect for GO */}
+        {isGo && (
+          <div className="absolute inset-4 rounded-xl border-2 border-green-400/30 animate-ping"></div>
+        )}
+      </div>
+    );
+  }
+
   const startIdx = lineOffset * wordsPerLine;
   const endIdx = startIdx + (wordsPerLine * visibleLines);
   const visibleWords = Array.isArray(words) ? words.slice(startIdx, endIdx) : [];
@@ -89,24 +170,34 @@ const TypingArea = ({
   return (
     <div 
       ref={containerRef}
-      tabIndex={0}
-      onKeyDown={onKeyDown}
+      tabIndex={!isMobile ? 0 : -1}
+      onKeyDown={!isMobile ? onKeyDown : undefined}
+      onClick={() => {
+        if (isMobile && hiddenInputRef.current && !isFocused) {
+          hiddenInputRef.current.focus();
+          setIsFocused(true);
+        }
+      }}
       className="bg-gray-800/30 backdrop-blur-sm rounded-xl p-4 sm:p-6 mb-4 sm:mb-6 cursor-text focus:outline-none focus:ring-2 focus:ring-purple-400/20 relative transition-all duration-300 hover:shadow-lg border border-purple-800/40"
     >
       {/* Hidden input for mobile keyboard */}
-      <input
-        ref={hiddenInputRef}
-        type="text"
-        className="absolute top-0 left-0 w-full h-full opacity-0 cursor-text"
-        onInput={handleHiddenInput}
-        onKeyDown={handleKeyDown}
-        autoComplete="off"
-        autoCorrect="off"
-        autoCapitalize="off"
-        spellCheck="false"
-        value=""
-        placeholder=""
-      />
+      {isMobile && (
+        <input
+          ref={hiddenInputRef}
+          type="text"
+          className="absolute top-0 left-0 w-full h-full opacity-0 cursor-text z-10"
+          onInput={handleHiddenInput}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          autoComplete="off"
+          autoCorrect="off"
+          autoCapitalize="off"
+          spellCheck="false"
+          value=""
+          placeholder=""
+        />
+      )}
       
       <div className="relative">
         <div className="text-lg sm:text-xl md:text-2xl leading-relaxed font-mono select-none tracking-normal">
@@ -186,16 +277,22 @@ const TypingArea = ({
           <div className="flex items-center gap-2">
             <span className="text-base">🐾</span>
             <span className="hidden sm:inline">Start typing to begin the test...</span>
-            <span className="sm:hidden">Tap here and start typing...</span>
+            <span className="sm:hidden">
+              {isFocused ? "Start typing..." : "Tap to start typing..."}
+            </span>
             <span className="text-base">🐾</span>
           </div>
-          <div className="sm:hidden text-xs text-gray-500 mt-1">
-            📱 Mobile keyboard will appear when you tap
-          </div>
+          {isMobile && !isFocused && (
+            <div className="sm:hidden text-xs text-gray-500 mt-1 animate-pulse">
+              📱 Tap anywhere to open keyboard
+            </div>
+          )}
         </div>
       )}
     </div>
   );
-};
+});
+
+TypingArea.displayName = 'TypingArea';
 
 export default TypingArea;

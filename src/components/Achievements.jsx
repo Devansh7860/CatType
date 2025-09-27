@@ -4,6 +4,7 @@ import { useTheme } from "../contexts/ThemeContext";
 import {
   getUserAchievements,
   checkAchievements,
+  calculateUserStats,
 } from "../services/analyticsService";
 import {
   ACHIEVEMENTS,
@@ -23,11 +24,15 @@ export const Achievements = ({ history }) => {
     setUserAchievements(achievements);
 
     // Check for new achievements
-    const newUnlocks = checkAchievements(history);
-    if (newUnlocks.length > 0) {
-      // Show celebration for newest achievement
-      setShowNewAchievement(newUnlocks[newUnlocks.length - 1]);
-      setTimeout(() => setShowNewAchievement(null), 5000);
+    if (history.length > 0) {
+      const userStats = calculateUserStats(history);
+      const currentTest = history[0]; // Most recent test
+      const newUnlocks = checkAchievements(userStats, currentTest, history);
+      if (newUnlocks.length > 0) {
+        // Show celebration for newest achievement
+        setShowNewAchievement(newUnlocks[newUnlocks.length - 1]);
+        setTimeout(() => setShowNewAchievement(null), 5000);
+      }
     }
   }, [history]);
 

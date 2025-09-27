@@ -9,7 +9,7 @@ import { History } from './components/History';
 import { Analytics } from './components/Analytics';
 import { Achievements } from './components/Achievements';
 import { fetchQuotes } from './services/textService';
-import { calculateWPM, calculateAccuracy } from './utils/calculations';
+import { calculateComprehensiveResults } from './utils/calculations';
 import { useTheme } from './contexts/ThemeContext';
 import './App.css';
 
@@ -28,6 +28,7 @@ const App = () => {
   const [isActive, setIsActive] = useState(false);
   const [isFinished, setIsFinished] = useState(false);
   const [startTime, setStartTime] = useState(null);
+  const [endTime, setEndTime] = useState(null);
   const [totalKeystrokes, setTotalKeystrokes] = useState(0);
   const [correctKeystrokes, setCorrectKeystrokes] = useState(0);
   const [history, setHistory] = useState([]);
@@ -38,9 +39,13 @@ const App = () => {
   const [isFetchingMore, setIsFetchingMore] = useState(false);
   const [lineOffset, setLineOffset] = useState(0);
   const [totalWordsTyped, setTotalWordsTyped] = useState(0);
+  const [countdown, setCountdown] = useState(0);
+  const [showCountdown, setShowCountdown] = useState(false);
 
   const intervalRef = useRef(null);
+  const countdownRef = useRef(null);
   const resultsRef = useRef(null);
+  const typingAreaRef = useRef(null);
   const WORDS_PER_LINE = 10;
   const VISIBLE_LINES = 3;
   const FETCH_THRESHOLD = WORDS_PER_LINE * 2; // Fetch when 2 lines remain
@@ -128,95 +133,57 @@ const App = () => {
     return () => clearInterval(intervalRef.current);
   }, [isActive, timeLeft]);
 
-  // Calculate results with improved WPM logic
-  const calculateResults = () => {
-    const timeElapsed = selectedTime - timeLeft;
-    const minutes = Math.max(timeElapsed / 60, 1/60); // Prevent division by zero
-    
-    let correctChars = 0;
-    let totalChars = 0;
-    let correctWords = 0;
-    let totalWords = 0;
-    
-    // Count all typed words including those scrolled past
-    const allTypedWords = typedWords.slice(0, totalWordsTyped);
-    
-    allTypedWords.forEach((typedWord, index) => {
-      const actualWord = words[index];
-      if (actualWord) {
-        totalWords++;
-        
-        // Check if entire word is correct
-        if (typedWord === actualWord) {
-          correctWords++;
-          correctChars += actualWord.length;
-        } else {
-          // Count only matching characters for incorrect words
-          for (let i = 0; i < Math.min(typedWord.length, actualWord.length); i++) {
-            if (typedWord[i] === actualWord[i]) {
-              correctChars++;
-            }
-          }
-        }
-        
-        totalChars += actualWord.length;
-        
-        // Add space between words (except last word)
-        if (index < allTypedWords.length - 1) {
-          totalChars++;
-          if (typedWord === actualWord) {
-            correctChars++; // Count space as correct if word was correct
-          }
-        }
-      }
-    });
-
-    // Add current word if still typing
-    if (!isFinished && currentInput && words[currentWordIndex]) {
-      const actualWord = words[currentWordIndex];
-      totalWords++;
+  // Countdown effect
+  useEffect(() => {
+    if (showCountdown && countdown > 0) {
+      countdownRef.current = setTimeout(() => {
+        setCountdown(prev => prev - 1);
+      }, 1000);
+    } else if (showCountdown && countdown === 0) {
+      setShowCountdown(false);
+      setIsActive(true);
+      setStartTime(Date.now());
       
-      for (let i = 0; i < Math.min(currentInput.length, actualWord.length); i++) {
-        if (currentInput[i] === actualWord[i]) {
-          correctChars++;
+      // Focus the typing area immediately after countdown
+      setTimeout(() => {
+        if (typingAreaRef.current && typingAreaRef.current.focus) {
+          typingAreaRef.current.focus();
         }
-      }
-      totalChars += actualWord.length;
+      }, 100);
     }
 
-    // Calculate accuracy-adjusted WPM
-    const rawAccuracy = totalKeystrokes > 0 ? (correctKeystrokes / totalKeystrokes) : 1;
-    const characterAccuracy = totalChars > 0 ? (correctChars / totalChars) : 0;
+    return () => clearTimeout(countdownRef.current);
+  }, [showCountdown, countdown]);
+
+  // Start countdown function
+  const startCountdown = () => {
+    if (loading || isFinished || isActive) return;
+    setShowCountdown(true);
+    setCountdown(3);
+  };
+
+  // Calculate results using industry-standard methods
+  const calculateResults = () => {
+    const endTimeValue = endTime || new Date().getTime();
     
-    // Use the more conservative accuracy measure
-    const effectiveAccuracy = Math.min(rawAccuracy, characterAccuracy);
-    
-    // Calculate WPM based on correct characters only (standard method)
-    const rawWPM = (correctChars / 5) / minutes;
-    
-    // Apply accuracy penalty for more realistic WPM
-    // If accuracy is below 90%, reduce WPM proportionally
-    const accuracyMultiplier = effectiveAccuracy < 0.9 ? effectiveAccuracy : 1;
-    const adjustedWPM = Math.round(rawWPM * accuracyMultiplier);
-    
-    const finalAccuracy = Math.round(effectiveAccuracy * 100);
-    
-    return {
-      wpm: Math.max(0, adjustedWPM), // Ensure non-negative WPM
-      accuracy: finalAccuracy,
-      time: selectedTime,
-      characters: correctChars,
-      errors: totalKeystrokes - correctKeystrokes,
-      keystrokes: totalKeystrokes,
-      timeElapsed: Math.round(timeElapsed),
-      wordsTyped: totalWordsTyped,
-      correctWords,
-      totalWords: Math.max(totalWords, 1)
-    };
+    return calculateComprehensiveResults({
+      words,
+      typedWords,
+      currentInput,
+      currentWordIndex,
+      startTime,
+      endTime: endTimeValue,
+      totalKeystrokes,
+      correctKeystrokes,
+      isFinished,
+      totalWordsTyped // Pass the actual words typed counter
+    });
   };
 
   // Finish test
   const finishTest = () => {
+    const now = new Date().getTime();
+    setEndTime(now);
     setIsActive(false);
     setIsFinished(true);
     
@@ -230,7 +197,12 @@ const App = () => {
     const results = calculateResults();
     const newEntry = {
       ...results,
-      difficulty: difficulty, // Add current difficulty to history entry
+      // Ensure backward compatibility with Results component
+      wordsTyped: results.totalWords,
+      characters: results.correctChars,
+      timeElapsed: results.actualTypingTime,
+      time: selectedTime,
+      difficulty: difficulty,
       date: new Date().toISOString(),
       id: Date.now()
     };
@@ -254,10 +226,14 @@ const App = () => {
   const handleKeyDown = (e) => {
     if (isFinished || loading) return;
 
-    if (!isActive && e.key.length === 1) {
-      setIsActive(true);
-      setStartTime(Date.now());
+    // Start countdown on first keypress (but only handle the key after countdown)
+    if (!isActive && !showCountdown && e.key.length === 1) {
+      startCountdown();
+      return; // Don't process this keypress, wait for countdown
     }
+
+    // Only process keypresses when test is active
+    if (!isActive) return;
 
     const currentWord = words[currentWordIndex];
     if (!currentWord) return;
@@ -328,7 +304,11 @@ const App = () => {
   const resetTest = () => {
     setIsActive(false);
     setIsFinished(false);
+    setShowCountdown(false);
+    setCountdown(0);
     setTimeLeft(selectedTime);
+    setStartTime(null);
+    setEndTime(null);
     setCurrentWordIndex(0);
     setCurrentInput('');
     setTypedWords([]);
@@ -337,6 +317,7 @@ const App = () => {
     setWordStatuses([]);
     setLineOffset(0);
     setTotalWordsTyped(0);
+    clearTimeout(countdownRef.current);
     initializeText();
   };
 
@@ -397,12 +378,13 @@ const App = () => {
               onTimeChange={changeTimer}
               selectedDifficulty={difficulty}
               onDifficultyChange={setDifficulty}
-              disabled={isActive || isFinished}
+              disabled={isActive || isFinished || showCountdown}
             />
             
             <TimerDisplay timeLeft={timeLeft} isActive={isActive} />
             
             <TypingArea
+              ref={typingAreaRef}
               words={words}
               currentWordIndex={currentWordIndex}
               currentInput={currentInput}
@@ -414,6 +396,8 @@ const App = () => {
               lineOffset={lineOffset}
               wordsPerLine={WORDS_PER_LINE}
               visibleLines={VISIBLE_LINES}
+              showCountdown={showCountdown}
+              countdown={countdown}
             />
             
             {isFinished && (
@@ -423,9 +407,13 @@ const App = () => {
             )}
             
             <div className="flex justify-center gap-4">
-              {!isActive && !isFinished && !loading && (
+              {!isActive && !isFinished && !loading && !showCountdown && (
                 <button
-                  onClick={() => document.querySelector('[tabindex="0"]').focus()}
+                  onClick={() => {
+                    if (typingAreaRef.current && typingAreaRef.current.focus) {
+                      typingAreaRef.current.focus();
+                    }
+                  }}
                   className={`px-6 py-3 bg-gradient-to-r ${colors.primary} text-white rounded-xl font-semibold hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-300 flex items-center gap-2 text-base`}
                 >
                   <span className="text-lg">🐾</span>
@@ -434,7 +422,7 @@ const App = () => {
                 </button>
               )}
               
-              {(isActive || isFinished) && (
+              {(isActive || isFinished || showCountdown) && (
                 <button
                   onClick={resetTest}
                   className={`px-6 py-3 ${colors.button} ${colors.buttonText} rounded-xl font-semibold hover:scale-105 transition-all duration-300 flex items-center gap-2 text-base shadow-md`}

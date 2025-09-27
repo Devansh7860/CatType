@@ -14,13 +14,15 @@ export const Results = ({ results }) => {
       isPremium ? 'shadow-2xl shadow-violet-500/20 animate-premium-glow' : 'shadow-xl'
     }`}>
       <div className="text-center mb-6 sm:mb-8">
-        <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r ${colors.primary} bg-clip-text text-transparent flex items-center justify-center gap-2 sm:gap-3 ${
-          isPremium ? 'animate-float' : ''
-        }`}>
-          <span className="text-3xl sm:text-4xl md:text-5xl">🎉</span>
-          {isPremium ? 'Premium Results!' : 'Test Complete!'}
-          <span className="text-3xl sm:text-4xl md:text-5xl">🐱</span>
-        </h2>
+        <div className="flex items-center justify-center gap-2 sm:gap-3 mb-2">
+          <span className="text-3xl sm:text-4xl md:text-5xl animate-bounce">🎉</span>
+          <h2 className={`text-2xl sm:text-3xl md:text-4xl font-bold bg-gradient-to-r ${colors.primary} bg-clip-text text-transparent ${
+            isPremium ? 'animate-float' : ''
+          }`}>
+            {isPremium ? 'Premium Results!' : 'Test Complete!'}
+          </h2>
+          <span className="text-3xl sm:text-4xl md:text-5xl animate-bounce">🐱</span>
+        </div>
       </div>
       
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 sm:gap-6 md:gap-8">

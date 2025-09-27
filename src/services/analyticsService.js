@@ -100,12 +100,7 @@ export const checkAchievements = (userStats, currentTest, history) => {
 
 export const getUserAchievements = () => {
   const unlockedIds = JSON.parse(localStorage.getItem('achievements') || '[]');
-  return Object.values(ACHIEVEMENTS).map(achievement => ({
-    ...achievement,
-    unlocked: unlockedIds.includes(achievement.id),
-    unlockedDate: unlockedIds.includes(achievement.id) ? 
-      localStorage.getItem(`achievement-${achievement.id}-date`) : null
-  }));
+  return unlockedIds;
 };
 
 export const getKeyboardHeatmap = (history) => {

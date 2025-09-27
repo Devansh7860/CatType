@@ -72,7 +72,7 @@ export const Header = ({
             <div className="flex items-center gap-1 sm:gap-2">
               <button
                 onClick={onHistoryToggle}
-                className={`px-2 py-2 sm:px-3 sm:py-2.5 rounded-xl ${colors.button} ${colors.buttonText} transition-all duration-300 flex items-center gap-1 sm:gap-2 hover:scale-105 transform shadow-md font-medium text-xs sm:text-sm`}
+                className={`px-2 py-2 sm:px-3 sm:py-2.5 rounded-xl ${colors.button} ${colors.buttonText} transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 hover:scale-105 transform shadow-md font-medium text-xs sm:text-sm`}
               >
                 <History className="w-4 h-4" />
                 <span className="hidden md:inline">History</span>
@@ -80,7 +80,7 @@ export const Header = ({
               
               <button
                 onClick={onAnalyticsToggle}
-                className={`px-2 py-2 sm:px-3 sm:py-2.5 rounded-xl ${colors.button} ${colors.buttonText} transition-all duration-300 flex items-center gap-1 sm:gap-2 hover:scale-105 transform shadow-md font-medium text-xs sm:text-sm`}
+                className={`px-2 py-2 sm:px-3 sm:py-2.5 rounded-xl ${colors.button} ${colors.buttonText} transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 hover:scale-105 transform shadow-md font-medium text-xs sm:text-sm`}
               >
                 <BarChart3 className="w-4 h-4" />
                 <span className="hidden md:inline">Analytics</span>
@@ -88,7 +88,7 @@ export const Header = ({
               
               <button
                 onClick={onAchievementsToggle}
-                className={`px-2 py-2 sm:px-3 sm:py-2.5 rounded-xl ${colors.button} ${colors.buttonText} transition-all duration-300 flex items-center gap-1 sm:gap-2 hover:scale-105 transform shadow-md font-medium text-xs sm:text-sm`}
+                className={`px-2 py-2 sm:px-3 sm:py-2.5 rounded-xl ${colors.button} ${colors.buttonText} transition-all duration-300 flex items-center justify-center gap-1 sm:gap-2 hover:scale-105 transform shadow-md font-medium text-xs sm:text-sm`}
               >
                 <Trophy className="w-4 h-4" />
                 <span className="hidden md:inline">Achievements</span>
