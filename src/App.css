@@ -1,0 +1,464 @@
+@import "tailwindcss";
+
+/* Purple scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1a1a2e;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a855f7, #ec4899);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #9333ea, #db2777);
+}
+
+/* Achievement animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes bounce-in {
+  0% { transform: scale(0.3) rotate(-10deg); opacity: 0; }
+  50% { transform: scale(1.05) rotate(2deg); }
+  70% { transform: scale(0.9) rotate(-1deg); }
+  100% { transform: scale(1) rotate(0deg); opacity: 1; }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.animate-bounce-in {
+  animation: bounce-in 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+}
+
+/* Firefox scrollbar */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #a855f7 #1a1a2e;
+}
+
+/* Enhanced cursor animation for premium feel */
+@keyframes cursor-blink {
+  0%, 45% { opacity: 1; }
+  46%, 100% { opacity: 0; }
+}
+
+.cursor-blink {
+  animation: cursor-blink 1.2s infinite;
+}
+
+/* Purple theme cursor with premium glow */
+.cursor-blink.purple-theme {
+  box-shadow: 
+    0 0 10px rgba(139, 92, 246, 0.7),
+    0 0 20px rgba(139, 92, 246, 0.4),
+    0 0 30px rgba(139, 92, 246, 0.2);
+  animation: cursor-blink-glow 1.2s infinite;
+}
+
+@keyframes cursor-blink-glow {
+  0%, 45% { 
+    opacity: 1;
+    box-shadow: 
+      0 0 10px rgba(139, 92, 246, 0.7),
+      0 0 20px rgba(139, 92, 246, 0.4),
+      0 0 30px rgba(139, 92, 246, 0.2);
+  }
+  46%, 100% { 
+    opacity: 0;
+    box-shadow: none;
+  }
+}
+
+/* Smooth fade in animation */
+@keyframes fadeIn {
+  from { 
+    opacity: 0; 
+    transform: translateY(10px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Premium floating animation */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+/* Premium glow effect for purple theme */
+@keyframes premium-glow {
+  0%, 100% {
+    box-shadow: 
+      0 0 20px rgba(139, 92, 246, 0.3),
+      0 0 40px rgba(139, 92, 246, 0.1),
+      inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  }
+  50% {
+    box-shadow: 
+      0 0 30px rgba(139, 92, 246, 0.5),
+      0 0 60px rgba(139, 92, 246, 0.2),
+      inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  }
+}
+
+.animate-premium-glow {
+  animation: premium-glow 2s ease-in-out infinite;
+}
+
+/* Enhanced success animation */
+@keyframes success-celebration {
+  0% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(34, 197, 94, 0);
+  }
+  50% { 
+    transform: scale(1.05);
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.5);
+  }
+  100% { 
+    transform: scale(1);
+    box-shadow: 0 0 0 rgba(34, 197, 94, 0);
+  }
+}
+
+.animate-success-celebration {
+  animation: success-celebration 0.6s ease-out;
+}
+
+/* Premium button hover effects */
+.premium-button {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.premium-button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+}
+
+.premium-button:hover::before {
+  left: 100%;
+}
+
+/* Gentle bouncing animation for cat elements */
+@keyframes bounce-gentle {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-6px); }
+}
+
+.animate-bounce-gentle {
+  animation: bounce-gentle 2s ease-in-out infinite;
+}
+
+/* Paw print animation */
+@keyframes paw-steps {
+  0% { transform: rotate(0deg) scale(1); }
+  50% { transform: rotate(5deg) scale(1.1); }
+  100% { transform: rotate(0deg) scale(1); }
+}
+
+.animate-paw-steps {
+  animation: paw-steps 0.6s ease-in-out;
+}
+
+/* Whisker twitch animation */
+@keyframes whisker-twitch {
+  0%, 100% { transform: rotate(0deg); }
+  25% { transform: rotate(2deg); }
+  75% { transform: rotate(-2deg); }
+}
+
+.animate-whisker-twitch {
+  animation: whisker-twitch 0.3s ease-in-out;
+}
+
+/* Loading spinner with cat theme */
+@keyframes cat-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-cat-spin {
+  animation: cat-spin 1s linear infinite;
+}
+
+/* Typing success animation */
+@keyframes success-glow {
+  0% { 
+    box-shadow: 0 0 5px rgba(34, 197, 94, 0.5); 
+    background-color: rgba(34, 197, 94, 0.05);
+  }
+  50% { 
+    box-shadow: 0 0 20px rgba(34, 197, 94, 0.8); 
+    background-color: rgba(34, 197, 94, 0.15);
+  }
+  100% { 
+    box-shadow: 0 0 5px rgba(34, 197, 94, 0.5); 
+    background-color: rgba(34, 197, 94, 0.05);
+  }
+}
+
+.animate-success-glow {
+  animation: success-glow 1s ease-in-out;
+}
+
+/* Gradient text animation */
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+.animate-gradient {
+  background: linear-gradient(270deg, #f97316, #ea580c, #fb923c, #f97316);
+  background-size: 400% 400%;
+  animation: gradient-shift 3s ease infinite;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Custom scrollbar with cat theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(31, 41, 55, 0.3);
+  border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(45deg, #f97316, #ea580c);
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(45deg, #ea580c, #dc2626);
+  box-shadow: 0 0 10px rgba(249, 115, 22, 0.5);
+}
+
+/* Card hover effects */
+.card-hover {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 0 20px rgba(249, 115, 22, 0.1);
+}
+
+/* Button press animation */
+.button-press {
+  transition: all 0.1s ease;
+}
+
+.button-press:active {
+  transform: scale(0.98);
+}
+
+/* Typing speed indicator */
+@keyframes speed-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+.speed-indicator {
+  animation: speed-pulse 2s ease-in-out infinite;
+}
+
+/* Cat ears decoration */
+.cat-ears::before,
+.cat-ears::after {
+  content: '';
+  position: absolute;
+  top: -8px;
+  width: 0;
+  height: 0;
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-bottom: 12px solid #f97316;
+}
+
+.cat-ears::before {
+  left: 20%;
+}
+
+.cat-ears::after {
+  right: 20%;
+}
+
+/* Responsive design improvements */
+@media (max-width: 1024px) {
+  .typing-area {
+    font-size: 1.5rem;
+    line-height: 2rem;
+  }
+  
+  .timer-display {
+    font-size: 3rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .typing-area {
+    font-size: 1.25rem;
+    line-height: 1.75rem;
+    padding: 1.5rem;
+  }
+  
+  .results-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+  
+  .timer-display {
+    font-size: 2.5rem;
+  }
+  
+  .header-container {
+    padding: 0.75rem 1rem;
+  }
+  
+  .header-title {
+    font-size: 1.5rem;
+  }
+  
+  .timer-selection button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .typing-area {
+    font-size: 1rem;
+    line-height: 1.5rem;
+    padding: 1rem;
+  }
+  
+  .results-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+  
+  .timer-display {
+    font-size: 2rem;
+  }
+  
+  .header-title {
+    font-size: 1.25rem;
+  }
+  
+  .main-container {
+    padding: 0.5rem;
+  }
+  
+  .progress-text {
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .typing-area {
+    font-size: 0.875rem;
+    line-height: 1.375rem;
+    padding: 0.75rem;
+  }
+  
+  .timer-display {
+    font-size: 1.75rem;
+  }
+  
+  .header-logo {
+    width: 2rem;
+    height: 2rem;
+  }
+  
+  .header-title {
+    font-size: 1.125rem;
+  }
+  
+  .action-button {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+  }
+  
+  .results-stat {
+    font-size: 1.75rem;
+  }
+}
+
+/* Touch improvements for mobile */
+@media (hover: none) {
+  .card-hover:hover {
+    transform: none;
+  }
+  
+  .button-press:active {
+    transform: scale(0.95);
+  }
+  
+  /* Increase touch targets */
+  button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+}
+
+/* Focus indicators */
+.focus-visible:focus-visible {
+  outline: 2px solid #f97316;
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+/* Loading states */
+.loading-shimmer {
+  background: linear-gradient(90deg, 
+    rgba(255, 255, 255, 0.05) 0%, 
+    rgba(255, 255, 255, 0.1) 50%, 
+    rgba(255, 255, 255, 0.05) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Animation for shimmer effect */
+.animate-shimmer {
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  background-size: 200% 100%;
+  animation: shimmer 2s ease-in-out infinite;
+}
